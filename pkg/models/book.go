@@ -8,9 +8,9 @@ import (
 
 type Book struct {
 	gorm.Model
-	Name        string `gorm:""json:"name"`
-	Author      string `json:"author"`
-	Publication string `json:"publication"`
+	Name        string `gorm:"NOT NULL"json:"name"`
+	Author      string `gorm:"NOT NULL"json:"author"`
+	Publication string `gorm:"NOT NULL"json:"publication"`
 }
 
 var db *gorm.DB
@@ -18,44 +18,54 @@ var db *gorm.DB
 func init() {
 	config.Connect()
 	db = config.GetDB()
-	db.AutoMigrate()
+	db.AutoMigrate(&Book{})
 }
 
 func (b *Book) CreateBook() (*Book, error) {
-	// db.NewRecord(b)
 	result := db.Create(&b)
 	if result.Error == nil {
 		return b, nil
 	} else {
-		// panic(result.Error)
 		return nil, result.Error
 	}
 }
 
-func GetAll() []Book {
+func GetAll() ([]Book, error) {
 	var books []Book
-	db.Find(&books)
-	return books
-}
-
-func GetById(Id int64) (*Book, *gorm.DB, error) {
-	var book Book
-	result := db.Where("id = ?", Id).First(&book)
+	result := db.Find(&books)
 	if result.Error == nil {
-		return &book, db, nil
+		return books, nil
 	} else {
-		// panic(result.Error)
-		return nil, db, result.Error
-	}
-}
-
-func DeleteById(Id int64) (*Book, error) {
-	var book Book
-	result := db.Where("id = ?", Id).First(&book).Delete(book)
-	if result.Error == nil {
-		return &book, nil
-	} else {
-		// panic(result.Error)
 		return nil, result.Error
 	}
+}
+
+func GetById(id int64) (*Book, error) {
+	var book *Book
+	result := db.First(&book, id)
+	if result.Error == nil {
+		return book, nil
+	} else {
+		return nil, result.Error
+	}
+}
+
+func DeleteById(id int64) (*Book, error) {
+	var book *Book
+	result := db.Where("id = ?", id).First(&book).Delete(book)
+	if result.Error == nil {
+		return book, nil
+	} else {
+		return nil, result.Error
+	}
+}
+
+func (b *Book) Save() error {
+	result := db.Save(b)
+	return result.Error
+}
+
+func (b *Book) Delete() error {
+	result := db.Delete(Book{}, b.ID)
+	return result.Error
 }
