@@ -1,8 +1,9 @@
 package models
 
 import (
-	"github.com/jinzhu/gorm"
+	// "github.com/jinzhu/gorm"
 	"github.com/prasadsurase/go-bookstore/pkg/config"
+	"gorm.io/gorm"
 )
 
 type Book struct {
@@ -21,7 +22,7 @@ func init() {
 }
 
 func (b *Book) CreateBook() (*Book, error) {
-	db.NewRecord(b)
+	// db.NewRecord(b)
 	result := db.Create(&b)
 	if result.Error == nil {
 		return b, nil

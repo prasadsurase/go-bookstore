@@ -25,7 +25,7 @@ func Book(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("error while parsing id")
 	}
-	book, err := models.GetById(id)
+	book, _, err := models.GetById(id)
 	w.Header().Set("Content-Type", "application/json")
 	if err != nil {
 		// w.Write()

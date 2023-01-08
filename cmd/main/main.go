@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -11,5 +13,7 @@ func main() {
 	router := mux.NewRouter()
 	routes.RegisterBookStoreRoutes(router)
 	router.Handle("/", router)
-	http.ListenAndServe("localhost:9000", router)
+	fmt.Println("Starting server at port 8081")
+	log.Fatal(http.ListenAndServe("localhost:8081", router))
+
 }
